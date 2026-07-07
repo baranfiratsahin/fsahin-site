@@ -10,3 +10,4 @@
 - 2026-07-06 responsive fixes
 - 2026-07-06 cache tuning
 - 2026-07-07 refactor render
+- 2026-07-07 layout pass
