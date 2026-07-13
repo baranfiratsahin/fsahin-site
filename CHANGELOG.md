@@ -19,3 +19,4 @@
 - 2026-07-09 responsive fixes
 - 2026-07-11 perf tune
 - 2026-07-13 polish header
+- 2026-07-13 layout pass
