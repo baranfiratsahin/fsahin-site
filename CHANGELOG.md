@@ -28,3 +28,4 @@
 - 2026-07-15 a11y pass
 - 2026-07-15 seo meta
 - 2026-07-15 responsive fixes
+- 2026-07-15 seo meta
