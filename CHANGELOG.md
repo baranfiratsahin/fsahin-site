@@ -32,3 +32,4 @@
 - 2026-07-16 a11y pass
 - 2026-07-17 polish header
 - 2026-07-18 cache tuning
+- 2026-07-18 polish header
