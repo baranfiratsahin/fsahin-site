@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>FIRAT GROUP // World Terminal — Baran Fırat Şahin</title>
+<meta name="description" content="Fırat Group — Konya merkezli bağımsız yazılım ve piyasa operasyonu. Canlı dünya terminali: gerçek zamanlı depremler, yangınlar, ISS, uçuşlar, piyasalar ve haber akışı." />
+<meta name="theme-color" content="#05070a" />
+<link rel="canonical" href="https://fsahin.com/" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://fsahin.com/" />
+<meta property="og:site_name" content="FIRAT GROUP" />
+<meta property="og:title" content="FIRAT GROUP // World Terminal" />
+<meta property="og:description" content="Canlı dünya terminali — gerçek zamanlı depremler, yangınlar, ISS, uçuşlar, piyasalar, haber akışı. Baran Fırat Şahin, Konya." />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="FIRAT GROUP // World Terminal" />
+<meta name="twitter:description" content="Canlı dünya terminali — gerçek zamanlı veriyle. Baran Fırat Şahin, Konya." />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2305070a'/%3E%3Ctext x='16' y='22' font-family='monospace' font-size='14' font-weight='700' fill='%23ffb000' text-anchor='middle'%3EFG%3C/text%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/vendor/leaflet.css" />
+<link rel="stylesheet" href="/surface.css" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+ {"@type":"Person","name":"Baran Fırat Şahin","url":"https://fsahin.com/",
+  "address":{"@type":"PostalAddress","addressLocality":"Konya","addressCountry":"TR"},
+  "sameAs":["https://tr.linkedin.com/in/barannn"],
+  "worksFor":{"@id":"https://fsahin.com/#org"}},
+ {"@type":"Organization","@id":"https://fsahin.com/#org","name":"Fırat Group","url":"https://fsahin.com/",
+  "location":{"@type":"Place","address":{"@type":"PostalAddress","addressLocality":"Konya","addressCountry":"TR"}}}]}
+</script>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand"><span class="fg">FG</span><b>FIRAT GROUP</b>
+    <button class="bfsbtn mono" id="id-btn" aria-haspopup="dialog" aria-label="Baran Fırat Şahin — hakkında">BFS</button>
+  </div>
+  <div class="mkts mono" aria-label="Canlı piyasalar"><span id="mkts" style="display:contents"></span><span class="mk" id="mk-kp" title="NOAA planetary K-index — jeomanyetik aktivite"></span><span class="mk" id="mk-fee" title="Bitcoin ağı anlık işlem ücreti — mempool.space"></span></div>
+  <div class="tstat mono">
+    <span id="firewatch" class="firewatch" title="NASA EONET gerçek verisiyle Türkiye çevresi yangın taraması"></span>
+    <button class="tv-btn mono" id="chat-btn" aria-label="Ziyaretçi sohbeti aç/kapat">◉ SOHBET</button>
+    <button class="tv-btn mono" id="tv-btn" aria-label="Canlı haber TV aç/kapat">◉ TV</button>
+    <span id="pulse" class="pulse" title="Wikimedia EventStreams — dünyadaki gerçek düzenleme akışı, canlı"></span>
+    <span id="lostbar" class="lostbar"></span>
+    <span id="visitors" class="visitors" title="Gerçek sayaç — 19 Tem 2026'dan beri"></span>
+    <span class="feedcount" id="feedcount">—/6 FEEDS</span>
+    <span id="iss-hud">ISS · —</span>
+    <span class="clock" id="clock">--:--:-- UTC+3</span>
+  </div>
+</header>
+
+<div class="stage">
+  <div id="map" aria-label="Canlı dünya haritası — depremler, yangınlar, ISS, uçuşlar"></div>
+  <div class="hint mono" id="hint">scroll = zoom · sürükle = keşfet · yaklaş, sokaklara in</div>
+  <div class="elog" id="elog" aria-label="Gerçek zamanlı olay günlüğü">
+    <div class="elog-h mono">EVENT LOG <span class="dim">// GERÇEK ZAMAN</span></div>
+    <div id="elog-body" class="mono"></div>
+  </div>
+  <span class="replay mono" id="replay-chip" title="Son 24 saatin gerçek depremleri haritada yeniden oynatılıyor">◉ REPLAY 24H</span>
+</div>
+
+<div class="idov" id="idov" role="dialog" aria-modal="true" aria-label="Hakkında">
+  <div class="idov-head mono"><span>BFS // KİMLİK</span><button id="idov-close" class="tv-close" aria-label="Kapat">✕</button></div>
+  <div class="idov-body">
+    <div class="bfs">BFS</div>
+    <h1>BARAN FIRAT ŞAHİN</h1>
+    <p class="org mono">FIRAT GROUP — KONYA, TÜRKİYE</p>
+    <p class="roles mono">FULLSTACK · MARKETS · BUILDER</p>
+    <p class="idtext">Bu ekran canlı bir dünya terminalidir: depremler (USGS/AFAD), doğa olayları (NASA),
+    uçuşlar (ADS-B ağı), ISS, piyasalar ve Türkiye + dünya haber akışı. Buradaki her sayı gerçektir ve
+    canlı kaynaklardan gelir — bu sitede uydurma veri yoktur. Kaynak ölürse sayı uydurulmaz, SIGNAL LOST yazar.</p>
+    <a class="idlink mono" href="https://tr.linkedin.com/in/barannn" target="_blank" rel="noopener">LINKEDIN ↗</a>
+  </div>
+</div>
+
+<div class="tv" id="tv" aria-label="Canlı haber yayını">
+  <div class="tv-head mono">
+    <span class="tv-title">LIVE TV</span>
+    <span class="tv-chs">
+      <button class="tv-ch on">DW</button><button class="tv-ch">FRANCE 24</button><button class="tv-ch">AL JAZEERA</button><button class="tv-ch">TRT WORLD</button><button class="tv-ch">EURONEWS</button><button class="tv-ch">BLOOMBERG</button><button class="tv-ch">SKY NEWS</button>
+    </span>
+    <button id="tv-close" class="tv-close" aria-label="Kapat">✕</button>
+  </div>
+  <iframe id="tv-frame" title="Canlı haber yayını" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+</div>
+
+<div class="chat" id="chat" aria-label="Ziyaretçi sohbeti">
+  <div class="chat-head mono"><span>SOHBET // ZİYARETÇİLER<span id="chat-online" class="dim"></span></span><button id="chat-close" class="tv-close" aria-label="Kapat">✕</button></div>
+  <div id="chat-body" class="chat-body mono"></div>
+  <div class="chat-err mono" id="chat-err"></div>
+  <div class="chat-row">
+    <input id="chat-name" class="mono" maxlength="24" placeholder="isim" aria-label="İsim" />
+    <input id="chat-msg" class="mono" maxlength="240" placeholder="mesaj yaz…" aria-label="Mesaj" />
+    <button id="chat-send" class="mono" aria-label="Gönder">▶</button>
+  </div>
+</div>
+
+<div class="newsbar" aria-label="Canlı haber akışı">
+  <span class="nb-tag mono" id="news-tag">NEWS<span class="src-dot" id="news-dot"></span></span>
+  <div class="nb-clip"><div class="nb-track mono" id="newsline"><span class="ni dim">sinyal bekleniyor…</span></div></div>
+</div>
+
+<noscript><div class="nojs">Bu terminal canlı veriyle çalışır — JavaScript gerekli.</div></noscript>
+
+<script src="/vendor/leaflet.js"></script>
+<script src="/app.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+{
+  // fsahin.com — served by a single Cloudflare Worker ("b" owns the custom domain).
+  // No "routes" block on purpose: deploys never touch domain config.
+  // KV backs the visitor counter + chat wall. To run your own copy:
+  //   npx wrangler kv namespace create STATS   → paste the id below.
+  "name": "b",
+  "main": "worker.js",
+  "compatibility_date": "2026-07-01",
+  "assets": { "directory": "public", "binding": "ASSETS" },
+  "kv_namespaces": [{ "binding": "STATS", "id": "<YOUR_KV_NAMESPACE_ID>" }]
+}

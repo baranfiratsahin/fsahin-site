@@ -1,0 +1,254 @@
+/* FSAHIN.COM V3 — map-only world terminal */
+:root{
+  --ground:#05070a; --panel:#0a0e13; --elev:#10151c; --edge:#1f2a36;
+  --txt:#e6e9ee; --txt2:#c7ccd4; --txt3:#94a3b8;
+  --amber:#ffb000; --amber-glow:rgba(255,176,0,.18);
+  --cyan:#7cd5ff; --green:#39ff88; --red:#ff3355;
+  --mono:"JetBrains Mono",ui-monospace,monospace;
+  --disp:"Space Grotesk",var(--mono);
+  --ease:cubic-bezier(.2,.8,.2,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--ground);color:var(--txt);font-family:var(--disp);overflow:hidden;font-size:14px}
+.mono{font-family:var(--mono)}
+.dim{color:var(--txt3)}
+.red{color:var(--red)}
+.cyan{color:var(--cyan)}
+a{color:var(--cyan)}
+:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+
+/* subtle scanline sheen over everything */
+body::after{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:120;
+  background:repeating-linear-gradient(0deg,transparent 0 2px,rgba(0,0,0,.05) 2px 3px);
+  mix-blend-mode:overlay;
+}
+
+/* ===== TOPBAR ===== */
+.topbar{
+  position:fixed;inset:0 0 auto 0;height:44px;z-index:100;
+  display:flex;align-items:center;gap:18px;padding:0 14px;
+  background:linear-gradient(180deg,rgba(10,14,19,.94),rgba(10,14,19,.78));
+  border-bottom:1px solid var(--edge);backdrop-filter:blur(8px);
+}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:.14em;flex-shrink:0}
+.brand .fg{
+  width:24px;height:24px;display:grid;place-items:center;
+  background:var(--amber);color:#05070a;font-family:var(--mono);font-size:11px;font-weight:700;
+  box-shadow:0 0 18px var(--amber-glow);
+}
+.mkts{flex:1;display:flex;gap:16px;overflow:hidden;white-space:nowrap;font-size:11px}
+.mk{display:inline-flex;gap:6px;align-items:baseline;color:var(--txt)}
+.mk i{font-style:normal;color:var(--txt3);font-size:9px;letter-spacing:.12em}
+.mk em{font-style:normal;font-size:9px}
+.mk em.up{color:var(--green)}
+.mk em.down{color:var(--red)}
+.tstat{display:flex;align-items:center;gap:14px;font-size:11px;color:var(--txt2);flex-shrink:0}
+.feedcount{color:var(--green);letter-spacing:.1em;font-size:10px}
+.feedcount.bad{color:var(--red)}
+.clock{color:var(--amber)}
+.lostbar{display:flex;gap:8px}
+.lostchip{
+  color:var(--red);font-size:9px;letter-spacing:.12em;border:1px solid var(--red);
+  padding:2px 7px;background:rgba(255,51,85,.08);
+}
+.lostchip::before{content:"● ";animation:blink 1.2s infinite}
+@keyframes blink{50%{opacity:.25}}
+
+/* ===== STAGE — the map IS the site ===== */
+.stage{position:fixed;inset:0;z-index:1}
+#map{position:absolute;inset:0;background:var(--ground)}
+.leaflet-container{background:var(--ground);font-family:var(--mono)}
+.leaflet-popup-content-wrapper,.leaflet-popup-tip{
+  background:var(--elev);color:var(--txt);border:1px solid var(--edge);border-radius:2px;
+}
+.leaflet-popup-content{font-size:12px;line-height:1.5}
+.leaflet-bar a{background:var(--elev);color:var(--txt);border-color:var(--edge)}
+.leaflet-bar a:hover{background:var(--panel)}
+.leaflet-control-zoom{margin-bottom:56px!important;margin-right:12px!important}
+
+.hint{
+  position:fixed;bottom:56px;left:50%;transform:translateX(-50%);z-index:80;
+  color:var(--txt3);font-size:11px;letter-spacing:.14em;
+  background:rgba(10,14,19,.7);padding:6px 12px;border:1px solid var(--edge);
+  transition:opacity .6s var(--ease);
+}
+.hint.gone{opacity:0;pointer-events:none}
+
+.bfsbtn{
+  background:rgba(255,176,0,.08);color:var(--amber);border:1px solid var(--edge);
+  padding:3px 9px;font-size:10px;letter-spacing:.14em;margin-left:6px;cursor:pointer;
+  transition:border-color .2s var(--ease);
+}
+.bfsbtn:hover{border-color:var(--amber)}
+
+/* ===== EVENT LOG (Palantir akışı — sadece gerçek olaylar) ===== */
+.elog{
+  position:fixed;left:14px;bottom:56px;z-index:70;width:310px;max-height:168px;
+  background:rgba(8,11,15,.95);border:1px solid var(--edge);border-left:2px solid var(--amber);
+  overflow:hidden;display:flex;flex-direction:column;
+}
+.elog-h{font-size:9px;letter-spacing:.2em;color:var(--amber);padding:6px 10px;border-bottom:1px solid var(--edge)}
+#elog-body{padding:4px 10px 8px;overflow:hidden}
+.el{font-size:9px;line-height:1.7;color:var(--txt2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.el i{font-style:normal;color:var(--txt3);margin-right:6px}
+.el b{font-weight:600;margin-right:6px;color:var(--cyan)}
+.el.q b{color:var(--red)}
+.el.f b{color:#ff7a00}
+.el.m b{color:var(--green)}
+.el.n b,.el.i b{color:var(--cyan)}
+.el.v b{color:var(--amber)}
+.el.p b{color:var(--cyan)}
+
+.replay{
+  position:fixed;right:60px;bottom:56px;z-index:70;font-size:9px;letter-spacing:.16em;color:var(--txt3);
+  background:rgba(10,14,19,.7);border:1px solid var(--edge);padding:4px 9px;
+}
+.pulse{color:var(--green);font-size:10px;letter-spacing:.08em;min-width:0}
+.pmeta{color:var(--txt3);font-size:10px}
+.plink.sec{color:var(--txt3)}
+.ftip{background:var(--elev);color:var(--txt);border:1px solid var(--edge);border-radius:2px;font-family:var(--mono);font-size:10px}
+.trtag{background:var(--red);color:#fff;font-size:8px;letter-spacing:.1em;padding:1px 4px;margin-right:6px;font-weight:700}
+
+/* ===== YANGIN GÖZÜ ===== */
+.firewatch{font-size:9px;letter-spacing:.12em;padding:3px 8px;border:1px solid var(--edge)}
+.firewatch.clear{color:var(--txt3)}
+.firewatch.alert{color:var(--red);border-color:var(--red);background:rgba(255,51,85,.08)}
+.firewatch.alert::before{content:"● ";animation:blink 1.2s infinite}
+.firewatch:empty{display:none}
+
+/* ===== SOHBET DUVARI ===== */
+.chat{
+  position:fixed;right:14px;top:56px;bottom:56px;z-index:105;width:300px;max-width:calc(100vw - 28px);
+  background:rgba(8,11,15,.96);border:1px solid var(--edge);border-top:2px solid var(--amber);
+  display:none;flex-direction:column;box-shadow:0 8px 40px rgba(0,0,0,.6);
+}
+.chat.open{display:flex}
+.chat-head{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;border-bottom:1px solid var(--edge);color:var(--amber);font-size:10px;letter-spacing:.18em}
+.chat-body{flex:1;overflow-y:auto;padding:8px 10px;scrollbar-width:thin}
+.cm{font-size:11px;line-height:1.6;color:var(--txt2);margin-bottom:6px;word-wrap:break-word}
+.cm i{font-style:normal;color:var(--txt3);font-size:9px;margin-right:6px}
+.cm b{color:var(--amber);font-weight:600;margin-right:6px}
+.cm.sys{color:var(--txt3);font-size:10px}
+.cm.sys b{color:var(--cyan);font-weight:500;font-size:9px;letter-spacing:.1em}
+.cm.pin{
+  color:var(--txt3);font-size:10px;line-height:1.6;
+  border-bottom:1px solid var(--edge);padding-bottom:8px;margin-bottom:8px;
+}
+.chat-err{color:var(--red);font-size:9px;padding:0 10px;min-height:14px}
+.chat-row{display:flex;gap:6px;padding:8px 10px;border-top:1px solid var(--edge)}
+.chat-row input{
+  background:var(--elev);border:1px solid var(--edge);color:var(--txt);font-size:11px;padding:7px 8px;min-width:0;
+}
+.chat-row input:focus{border-color:var(--amber);outline:none}
+#chat-name{width:70px;flex-shrink:0}
+#chat-msg{flex:1}
+#chat-send{background:var(--amber);color:#05070a;border:0;padding:0 12px;font-weight:700;cursor:pointer}
+#chat-send:hover{background:#ffc233}
+
+/* ===== IDENTITY OVERLAY ===== */
+.idov{
+  position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:130;width:440px;max-width:calc(100vw - 28px);
+  background:var(--panel);border:1px solid var(--edge);border-top:2px solid var(--amber);
+  box-shadow:0 12px 60px rgba(0,0,0,.7);display:none;
+}
+.idov.open{display:block}
+.idov-head{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-bottom:1px solid var(--edge);color:var(--amber);font-size:10px;letter-spacing:.2em}
+.idov-body{padding:18px 20px 20px}
+.idov-body .bfs{font-family:var(--disp);font-weight:700;font-size:34px;color:var(--amber);text-shadow:0 0 24px var(--amber-glow)}
+.idov-body h1{font-size:16px;letter-spacing:.16em;margin-top:6px}
+.idov-body .org{font-size:11px;color:var(--txt2);letter-spacing:.14em;margin-top:4px}
+.idov-body .roles{font-size:10px;color:var(--cyan);letter-spacing:.16em;margin-top:8px}
+.idtext{font-size:12px;line-height:1.7;color:var(--txt2);margin-top:12px}
+.idlink{display:inline-block;margin-top:14px;font-size:10px;letter-spacing:.14em;text-decoration:none;border:1px solid var(--edge);padding:6px 10px;transition:border-color .2s var(--ease)}
+.idlink:hover{border-color:var(--cyan)}
+
+/* cinematic edge vignette over the map */
+.stage::after{
+  content:"";position:absolute;inset:0;pointer-events:none;z-index:40;
+  background:radial-gradient(ellipse 130% 110% at 50% 45%,transparent 62%,rgba(5,7,10,.55) 100%);
+}
+
+/* map glyphs */
+.qpulse{border:2px solid var(--red);border-radius:50%;animation:qp 1.6s infinite;opacity:.8}
+@keyframes qp{0%{transform:scale(.4);opacity:.9}100%{transform:scale(1.6);opacity:0}}
+.iss-ico{
+  font-family:var(--mono);font-size:10px;color:var(--cyan);letter-spacing:.1em;white-space:nowrap;
+  text-shadow:0 0 10px rgba(124,213,255,.8);
+}
+.qk{filter:drop-shadow(0 0 5px rgba(255,176,0,.55))}
+.qk.hot{filter:drop-shadow(0 0 7px rgba(255,51,85,.7))}
+.fireG{filter:drop-shadow(0 0 5px rgba(255,122,0,.75))}
+.stormG{filter:drop-shadow(0 0 5px rgba(124,213,255,.6))}
+.planeW{transform-origin:50% 50%}
+.planeW svg{filter:drop-shadow(0 0 4px rgba(124,213,255,.65));opacity:.85}
+.visitors{color:var(--txt3);font-size:10px;letter-spacing:.08em}
+.plink{font-size:10px;letter-spacing:.1em;color:var(--amber);text-decoration:none}
+.plink:hover{text-decoration:underline}
+
+/* ===== LIVE TV ===== */
+.tv-btn{background:rgba(255,176,0,.08);color:var(--amber);border:1px solid var(--amber);padding:4px 10px;font-size:10px;letter-spacing:.16em;transition:background .2s var(--ease)}
+.tv-btn:hover{background:rgba(255,176,0,.2)}
+.tv{position:fixed;right:14px;top:56px;width:430px;max-width:calc(100vw - 28px);z-index:110;background:var(--panel);border:1px solid var(--edge);display:none;box-shadow:0 8px 40px rgba(0,0,0,.6)}
+.tv.open{display:block}
+.tv-head{display:flex;align-items:center;gap:10px;padding:8px 10px;border-bottom:1px solid var(--edge)}
+.tv-title{color:var(--amber);font-size:10px;letter-spacing:.2em}
+.tv-title::before{content:"● ";color:var(--red);animation:blink 1.2s infinite}
+.tv-chs{flex:1;display:flex;gap:6px;flex-wrap:wrap}
+.trdot{
+  width:10px;height:10px;border-radius:50%;background:var(--amber);
+  box-shadow:0 0 10px rgba(255,176,0,.9),0 0 20px rgba(255,176,0,.4);
+  border:1px solid rgba(255,255,255,.5);
+}
+.tv-ch{background:none;border:1px solid var(--edge);color:var(--txt3);font-size:9px;letter-spacing:.1em;padding:3px 8px;transition:color .2s var(--ease),border-color .2s var(--ease)}
+.tv-ch.on,.tv-ch:hover{color:var(--amber);border-color:var(--amber)}
+.tv-close{background:none;border:0;color:var(--txt3);font-size:14px;padding:2px 6px}
+.tv-close:hover{color:var(--red)}
+#tv-frame{width:100%;aspect-ratio:16/9;border:0;display:block;background:#000}
+
+/* ===== NEWSBAR ===== */
+.newsbar{
+  position:fixed;inset:auto 0 0 0;height:40px;z-index:100;display:flex;align-items:center;
+  background:linear-gradient(0deg,rgba(10,14,19,.97),rgba(10,14,19,.88));
+  border-top:1px solid var(--edge);backdrop-filter:blur(8px);
+}
+.nb-tag{
+  flex-shrink:0;display:flex;align-items:center;gap:8px;padding:0 14px;height:100%;
+  color:var(--amber);font-size:10px;letter-spacing:.2em;border-right:1px solid var(--edge);
+}
+#news-src{color:var(--txt3);font-size:9px}
+.src-dot{width:7px;height:7px;border-radius:50%;background:var(--edge)}
+.src-dot.ok{background:var(--green);box-shadow:0 0 8px rgba(57,255,136,.7)}
+.src-dot.err{background:var(--red);box-shadow:0 0 8px rgba(255,51,85,.7)}
+.nb-clip{flex:1;overflow:hidden;height:100%;display:flex;align-items:center}
+.nb-track{display:inline-flex;gap:34px;white-space:nowrap;padding-left:100%;animation:ticker 50s linear infinite;will-change:transform}
+.nb-track:hover{animation-play-state:paused}
+@keyframes ticker{to{transform:translateX(-100%)}}
+.ni{font-size:11px;color:var(--txt2);text-decoration:none;display:inline-flex;gap:8px;align-items:baseline}
+.ni:hover b{color:var(--amber)}
+.ni b{font-weight:500;color:var(--txt)}
+.ni .host{color:var(--txt3);font-size:9px}
+
+.nojs{position:fixed;inset:44px 0 auto 0;z-index:200;background:var(--red);color:#05070a;padding:10px;text-align:center;font-weight:600}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width:900px){
+  .mkts{display:none}
+}
+@media (max-width:900px){
+  .elog,.replay,.pulse{display:none}
+}
+@media (max-width:640px){
+  #iss-hud{display:none}
+  .hint{display:none}
+  .feedcount{display:none}
+  .leaflet-control-zoom{display:none}
+}
+
+/* Not: veri hareketi (ticker, uçak, ISS) her zaman açık — site sahibinin kararı.
+   Reduced-motion yalnızca dekoratif yanıp sönmeleri kapatır. */
+@media (prefers-reduced-motion:reduce){
+  .lostchip::before{animation:none}
+  .tv-title::before{animation:none}
+}
