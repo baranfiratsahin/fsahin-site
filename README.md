@@ -30,18 +30,18 @@ served by a single Cloudflare Worker.
 
 | Feed | Source |
 |---|---|
-| Earthquakes (M2.5+, 24h) | USGS |
-| ISS position + track | wheretheiss.at |
-| Live aircraft | airplanes.live · adsb.lol |
-| Wildfire watch (TR region alarm) | NASA EONET |
-| Space weather (planetary Kp) | NOAA SWPC |
-| Weather + TR air quality (14 cities) | Open-Meteo |
-| BTC mempool fees | mempool.space |
-| Crypto prices | CoinGecko · Kraken |
-| FX rates | Frankfurter · ER-API |
+| Earthquakes (M2.5+, 24h) |  |
+| ISS position + track |  |
+| Live aircraft |  |
+| Wildfire watch (TR region alarm) |  |
+| Space weather (planetary Kp) | |
+| Weather + TR air quality (14 cities) |  |
+| BTC mempool fees |  |
+| Crypto prices |  |
+| FX rates | |
 | Türkiye news ticker | TRT · AA · Hürriyet · CNN Türk RSS |
 | Global news | GDELT (Hacker News fallback) |
-| Visitor counter + chat wall | Workers KV — every count and message is a real visitor |
+| Visitor counter + chat wall |  |
 
 **SIGNAL LOST design:** when an upstream dies, the UI says `SIGNAL LOST` instead of
 rendering stale or invented data. The identity panel's "no fabricated data" promise is
