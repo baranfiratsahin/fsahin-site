@@ -1,77 +1,36 @@
 <div align="center">
 
-# fsahin.com — WORLD TERMINAL
+# fsahin.com — World Terminal
 
-**A fullscreen live-data world map. No frameworks, no fake data, one Cloudflare Worker.**
+**Tam ekran, canlı veri dünya terminali · Fullscreen live-data command surface**
 
-[![Live](https://img.shields.io/website?url=https%3A%2F%2Ffsahin.com&label=fsahin.com&up_message=LIVE&down_message=SIGNAL%20LOST&style=flat-square)](https://fsahin.com)
-![JavaScript](https://img.shields.io/badge/vanilla_JS-zero_deps-F7DF1E?style=flat-square&logo=javascript&logoColor=black)
-![Cloudflare Workers](https://img.shields.io/badge/Cloudflare-Workers%20%2B%20KV-F38020?style=flat-square&logo=cloudflare&logoColor=white)
-![Leaflet](https://img.shields.io/badge/Leaflet-vendored-199900?style=flat-square&logo=leaflet&logoColor=white)
-![License](https://img.shields.io/badge/license-MIT-333?style=flat-square)
-
-[**► OPEN THE TERMINAL**](https://fsahin.com)
-
-<img src="docs/fsahin-live.png" alt="fsahin.com live world terminal" width="100%" />
+[![live](https://img.shields.io/badge/CANLI-fsahin.com-39ff88?style=for-the-badge&labelColor=0b0e14)](https://fsahin.com)
+![stack](https://img.shields.io/badge/vanilla_JS-·_no_framework-ffb000?style=for-the-badge&labelColor=0b0e14)
+![edge](https://img.shields.io/badge/Cloudflare-Worker_+_KV-7cd5ff?style=for-the-badge&labelColor=0b0e14)
 
 </div>
 
----
+Dünyayı tek bir komuta ekranından izleyen, **yalnızca gerçek veriyle** çalışan canlı terminal. Çerçevesiz vanilla JS, tek bir Cloudflare Worker ve KV üzerinde. Sahte veri yok — bir kaynak düşerse ekran uydurmaz, dürüstçe `SIGNAL LOST` yazar.
 
-## What it is
+> A live command surface for the whole planet, driven by **real feeds only** — no framework, one edge Worker, honest failure states.
 
-The entire site is a map. No scroll, no pages — a dark command-terminal view of Earth
-streaming **13 real data feeds**, rendered with vanilla JS and vendored Leaflet,
-served by a single Cloudflare Worker.
+### ⬢ 13 Canlı Veri Akışı
+`Depremler (USGS/AFAD)` · `Uçuşlar (ADS-B)` · `ISS` · `Yangın & doğa olayları (NASA EONET)` · `Piyasalar (kripto + döviz)` · `Uzay havası (NOAA Kp)` · `Türkiye şehir hava durumu` · `Hava kalitesi` · `Haber akışı (TR + dünya)` · `Ziyaretçi sohbeti` · `Global nabız (Wikimedia)`
 
-*Türkçe: Sitenin tamamı canlı bir dünya haritası — 13 gerçek veri akışı, sıfır framework, tek Worker.*
-
-## Live feeds — all real, no fallbacks faked
-
-| Feed | Source |
-|---|---|
-| Earthquakes (M2.5+, 24h) |  |
-| ISS position + track |  |
-| Live aircraft |  |
-| Wildfire watch (TR region alarm) |  |
-| Space weather (planetary Kp) | |
-| Weather + TR air quality (14 cities) |  |
-| BTC mempool fees |  |
-| Crypto prices |  |
-| FX rates | |
-| Türkiye news ticker | TRT · AA · Hürriyet · CNN Türk RSS |
-| Global news | GDELT (Hacker News fallback) |
-| Visitor counter + chat wall |  |
-
-**SIGNAL LOST design:** when an upstream dies, the UI says `SIGNAL LOST` instead of
-rendering stale or invented data. The identity panel's "no fabricated data" promise is
-enforced in code — the chat wall launched empty and only ever shows real messages
-(1 msg/min per IP via KV TTL, daily cap, fully escaped rendering).
-
-## Architecture
-
-```mermaid
-flowchart LR
-    V[Visitor] --> W["Cloudflare Worker « b »"]
-    W -->|static| A["ASSETS<br/>public/ — index.html · app.js · surface.css · vendored Leaflet"]
-    W -->|"/api/*"| P["Feed proxies + cache"]
-    P --> U["USGS · ISS · ADS-B · EONET · NOAA · Open-Meteo · mempool<br/>CoinGecko · Kraken · FX · TR RSS · GDELT/HN"]
-    W <-->|counter · chat wall · rate limit| K[("Workers KV<br/>STATS")]
+### ⬢ Mimari
+```
+Tarayıcı (Leaflet + vanilla JS)
+        │  yalnızca kendi origin'i
+        ▼
+Cloudflare Worker  ──►  /api/* : gerçek kaynaklara proxy + edge cache + dürüst 502
+        │
+        └─ KV : ziyaretçi sayacı · sohbet duvarı
 ```
 
-One Worker does everything: serves the static shell, proxies and caches the upstream
-feeds (browser never hits third parties directly), and owns a KV namespace for the
-visitor counter and chat wall.
+**Tasarım ilkesi:** her sayı canlı bir kaynağa iner; hiçbir piksel uydurma değildir.
 
-## Run it yourself
+<div align="center">
 
-```bash
-npm install
-npx wrangler kv namespace create STATS   # paste the id into wrangler.jsonc
-npm run dev                              # http://localhost:8787
-npm run deploy
-```
+**[▸ fsahin.com](https://fsahin.com)**
 
-## License
-
-MIT © Baran Fırat Şahin — [fsahin.com](https://fsahin.com)
+</div>
